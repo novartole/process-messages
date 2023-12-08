@@ -1,0 +1,16 @@
+[package]
+name = "instrumentation"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# setup tracing
+tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+# catch errors while tracing
+tracing-error = "0.2.0"
+# adjust cli
+clap = { version = "4.4.8", features = ["env", "derive"] }
+# colorful output and anyhow like error wrapper
+color-eyre = "0.6.2" 
+# enable tracing
+tracing = "0.1.40"

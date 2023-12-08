@@ -1,0 +1,3 @@
+[workspace]
+resolver = "2"
+members = ["processor", "queue_worker", "web_app", "shared/*"]

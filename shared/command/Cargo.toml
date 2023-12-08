@@ -1,0 +1,10 @@
+[package]
+name = "command"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# serialization/deserialization
+serde = {version = "1.0.192", features = ["derive"] }
+# custom error
+thiserror = "1.0.50"

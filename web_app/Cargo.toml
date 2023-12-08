@@ -1,0 +1,27 @@
+[package]
+name = "nats-web-app"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+command = { path = "../shared/command/" }
+instrumentation = { path = "../shared/instrumentation/" }
+
+# backend
+axum = "0.6.20"
+# span and req/res layers
+tower-http = { version = "0.4.4", features = ["trace"] }
+# nats
+async-nats = "0.33.0"
+# json se/de
+serde_json = "1.0.108"
+# async runtime
+tokio = { version = "1.34.0", features = ["full"] }
+# adjust cli
+clap = { version = "4.4.8", features = ["env", "derive"] }
+# colorful output and anyhow like error wrapper
+color-eyre = "0.6.2" 
+# enable tracing
+tracing = "0.1.40"
+# url
+url = "2.5.0"
