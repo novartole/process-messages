@@ -1,0 +1,88 @@
+version: '3'
+
+name: nats
+
+services:
+  web-app:
+    build:
+      context: .
+      dockerfile: web_app/Dockerfile
+    environment:
+    - REST_IP=0.0.0.0
+    - NATS_IP=nats-main
+    ports:
+    - 3000:3000
+    depends_on:
+    - nats-main
+    networks:
+    - internal
+
+  nats-main:
+    image: nats:2.10.5-alpine3.18
+    command: |
+      -c /etc/nats/nats-server.conf
+      --name nats-main
+      --cluster_name NATS
+      --routes=nats-route://ruser:T0pS3cr3t@nats-main:6222
+      -js
+    networks:
+    - nats-net
+    - internal
+
+  nats-2:
+    image: nats:2.10.5-alpine3.18
+    command: |
+      -c /etc/nats/nats-server.conf
+      --name nats-2 
+      --cluster_name NATS
+      --routes=nats-route://ruser:T0pS3cr3t@nats-main:6222
+      -js
+      -DV
+    depends_on:
+    - nats-main
+    networks:
+    - nats-net
+
+  nats-3:
+    image: nats:2.10.5-alpine3.18
+    command: |
+      -c /etc/nats/nats-server.conf
+      --name nats-3 
+      --cluster_name NATS
+      --routes=nats-route://ruser:T0pS3cr3t@nats-main:6222
+      -js
+      -DV
+    depends_on:
+    - nats-main
+    networks:
+    - nats-net
+
+  processor:
+    build:
+      context: .
+      dockerfile: processor_svc/Dockerfile
+    environment:
+    - NATS_IP=nats-main
+    depends_on:
+    - web-app
+    - nats-main
+    networks:
+    - internal
+
+  queue-worker:
+    build:
+      context: .
+      dockerfile: queue_worker_svc/Dockerfile
+    environment:
+    - NATS_IP=nats-main
+    depends_on:
+    - web-app
+    - nats-main
+    deploy:
+      replicas: 2
+    networks:
+    - internal
+
+networks:
+  nats-net:
+  internal:

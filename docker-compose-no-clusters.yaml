@@ -1,0 +1,60 @@
+version: '3'
+
+name: nats
+
+services:
+  web-app:
+    build:
+      context: .
+      dockerfile: web_app/Dockerfile
+    command: --log-directive=off
+    environment:
+    - REST_IP=0.0.0.0
+    - NATS_IP=nats-main
+    ports:
+    - 3000:3000
+    depends_on:
+    - nats-main
+    networks:
+    - internal
+
+  nats-main:
+    image: nats:2.10.5-alpine3.18
+    command: |
+      --name nats-main
+      -js
+    networks:
+    - nats-net
+    - internal
+
+  processor:
+    build:
+      context: .
+      dockerfile: processor_svc/Dockerfile
+    command: --log-directive=off
+    environment:
+    - NATS_IP=nats-main
+    depends_on:
+    - web-app
+    - nats-main
+    networks:
+    - internal
+
+  queue-worker:
+    build:
+      context: .
+      dockerfile: queue_worker_svc/Dockerfile
+    command: --log-directive=debug
+    environment:
+    - NATS_IP=nats-main
+    depends_on:
+    - web-app
+    - nats-main
+    deploy:
+      replicas: 2
+    networks:
+    - internal
+
+networks:
+  nats-net:
+  internal:
