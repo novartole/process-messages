@@ -2,7 +2,7 @@ mod logger;
 
 use std::{io::IsTerminal, error::Error, env};
 
-use color_eyre::{eyre::Context, Result};
+use color_eyre::{eyre::{Context, self}, Result};
 use tracing::Subscriber;
 use tracing_subscriber::{
     filter::Directive, 
@@ -86,7 +86,10 @@ impl Instrumentation {
                 if self.log_directives.is_empty() {
                     EnvFilter::try_new(&format!(
                         "{}={}",
-                        env::var("CARGO_PKG_NAME")?.replace('-', "_"),
+                        env::current_exe()?
+                            .file_name().ok_or(eyre::eyre!("Failed to get file_name"))?
+                            .to_str().ok_or(eyre::eyre!("Failed to parse file_name to str"))?
+                            .replace('-', "_"),
                         self.log_level()
                     ))?
                 } else {
