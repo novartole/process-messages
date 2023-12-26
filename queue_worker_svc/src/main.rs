@@ -33,10 +33,16 @@ async fn main() -> Result<()> {
         .await?;
 
     let rw_command = Arc::new(RwLock::new(Command::default()));
+    let worker_id = Arc::new(cli.worker_id);
 
-    spawn_command_processor(client.clone(), Arc::clone(&rw_command)).await;
+    spawn_command_processor(
+        client.clone(),
+        Arc::clone(&rw_command),
+        Arc::clone(&worker_id),
+    )
+    .await;
 
-    info!("Start worker #{}", cli.worker_id);
+    info!("Start worker #{}", worker_id);
     debug!(
         "Subscribed to '{}' with group '{}'",
         NATS_WQ, NATS_QUEUE_GROUP
@@ -76,7 +82,11 @@ async fn main() -> Result<()> {
     Ok(())
 }
 
-async fn spawn_command_processor(client: Client, rw_command: Arc<RwLock<Command>>) {
+async fn spawn_command_processor(
+    client: Client,
+    rw_command: Arc<RwLock<Command>>,
+    worker_id: Arc<String>,
+) {
     info!("Start command processor");
 
     tokio::spawn(async move {
@@ -96,7 +106,7 @@ async fn spawn_command_processor(client: Client, rw_command: Arc<RwLock<Command>
 
         let mut consumer = stream
             .create_consumer(jetstream::consumer::pull::Config {
-                durable_name: Some("processor-fnf".to_string()),
+                durable_name: Some(format!("processor-fnf-{}", worker_id)),
                 ..Default::default()
             })
             .await?;

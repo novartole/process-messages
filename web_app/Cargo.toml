@@ -3,6 +3,10 @@ name = "nats-web-app"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "web_app"
+path = "src/main.rs"
+
 [dependencies]
 command = { path = "../shared/command/" }
 instrumentation = { path = "../shared/instrumentation/" }

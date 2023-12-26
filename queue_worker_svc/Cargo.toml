@@ -1,15 +1,24 @@
 [package]
-name = "nats-processor-service"
+name = "nats-queue-worker-service"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "queue_worker_svc"
+path = "src/main.rs"
+
 [dependencies]
+command = { path = "../shared/command/" }
 instrumentation = { path = "../shared/instrumentation/" }
 
+# uuid
+uuid = { version = "1.6.1", features = ["fast-rng", "v4"] }
 # nats
 async-nats = "0.33.0"
 # features of futures
 futures = "0.3.29"
+# json se/de
+serde_json = "1.0.108"
 # async runtime
 tokio = { version = "1.34.0", features = ["full"] }
 # adjust cli
