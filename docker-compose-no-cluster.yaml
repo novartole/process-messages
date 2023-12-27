@@ -7,7 +7,6 @@ services:
     build:
       context: .
       dockerfile: web_app/Dockerfile
-    command: --log-directive=off
     environment:
     - REST_IP=0.0.0.0
     - NATS_IP=nats-main
@@ -31,7 +30,6 @@ services:
     build:
       context: .
       dockerfile: processor_svc/Dockerfile
-    command: --log-directive=off
     environment:
     - NATS_IP=nats-main
     depends_on:
@@ -44,7 +42,6 @@ services:
     build:
       context: .
       dockerfile: queue_worker_svc/Dockerfile
-    command: --log-directive=debug
     environment:
     - NATS_IP=nats-main
     depends_on:
