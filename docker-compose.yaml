@@ -37,7 +37,6 @@ services:
       --cluster_name NATS
       --routes=nats-route://ruser:T0pS3cr3t@nats-main:6222
       -js
-      -DV
     depends_on:
     - nats-main
     networks:
@@ -51,7 +50,6 @@ services:
       --cluster_name NATS
       --routes=nats-route://ruser:T0pS3cr3t@nats-main:6222
       -js
-      -DV
     depends_on:
     - nats-main
     networks:
